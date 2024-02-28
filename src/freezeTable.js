@@ -5,10 +5,12 @@ const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
  * @typedef {Object} Options
  * @property {boolean} [freezeHead=true] - Enable to freeze <thead>.
  * @property {boolean} [freezeColumn=true] - Enable to freeze column(s).
+ * @property {boolean} [freezeColumnHead=true] - Enable to freeze column(s) head (Entire column).
  */
 const OPTIONS = {
   freezeHead: 'boolean',
   freezeColumn: 'boolean',
+  freezeColumnHead: 'boolean',
 };
 /**
  * Class representing a FreezeTable instance.
@@ -19,6 +21,7 @@ export class FreezeTable {
   defaultOptions = {
     freezeHead: true,
     freezeColumn: true,
+    freezeColumnHead: true,
   };
 
   /**
@@ -187,6 +190,61 @@ export class FreezeTable {
           this.columnWrapper.style.visibility = 'hidden';
         }
       });
+    }
+  }
+
+  buildFreezeColumnHead() {
+    const columnHeadWrapper = document.createElement('div');
+    const tableClone = this.table.cloneNode(true);
+
+    columnHeadWrapper.classList.add('column-header-wrapper');
+    columnHeadWrapper.append(tableClone);
+    columnHeadWrapper.style.top = `${this.tableWrapper.offsetTop}px`;
+
+    tableClone.style.backgroundColor = 'white';
+
+    if (this.options.shadow) {
+      console.log('Applying shadow to the columnHeadWrapper');
+    }
+
+    if (this.options.columnHeadWrapperStyles) {
+      console.log('Applying columnHeadWrapperStyles to the columnHeadWrapper');
+    }
+
+    this.tableWrapper.append(columnHeadWrapper);
+
+    this.tableWrapper.addEventListener('scroll', () => {
+      if (this.isWindowScrollX) return;
+
+      this.detect();
+    });
+
+    if (this.options.scrollable) {
+      console.log('make it scrollable on y axis');
+    } else if (this.options.container === window) {
+      console.log(
+        'update the position of the header when scrolling directly on the window',
+      );
+    } else {
+      console.log(
+        'update the position of the header when scrolling inside a container different of the window',
+      );
+    }
+  }
+
+  detect() {
+    const windowTop = window.scrollY || document.documentElement.scrollTop;
+    const tableTop = this.table.offsetTop - 1;
+
+    if (
+      tableTop <= windowTop &&
+      tableTop + this.table.offsetHeight - 1 >= windowTop &&
+      this.tableWrapper.scrollLeft > 0
+    ) {
+      this.columnHeadTableWrap.style.top = `${windowTop}px`;
+      this.columnHeadTableWrap.style.visibility = 'visible';
+    } else {
+      this.columnHeadTableWrap.style.visibility = 'hidden';
     }
   }
 }

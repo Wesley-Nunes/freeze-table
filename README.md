@@ -4,7 +4,7 @@ Freeze head and columns.
 
 ## Table of Contents
 
--   [How to use](#how-to-use)
+- [How to use](#how-to-use)
 
 ## <a name="how-to-use"></a>How to use
 
@@ -12,15 +12,15 @@ Freeze head and columns.
 
 ```html
 <section id="my-table-wrapper">
-    <table>
-        <thead>
-            <th>...</th>
-        </thead>
-        <tbody>
-            <td>...</td>
-        </tbody>
-        <tbody></tbody>
-    </table>
+  <table>
+    <thead>
+      <th>...</th>
+    </thead>
+    <tbody>
+      <td>...</td>
+    </tbody>
+    <tbody></tbody>
+  </table>
 </section>
 ```
 
@@ -31,9 +31,9 @@ Freeze head and columns.
 It's useful when you don't need table manipulations after the creation.
 
 ```js
-import { freezeTableCall } from "freezeTable";
+import { freezeTableCall } from 'freezeTable';
 
-freezeTableCall("my-freeze-table");
+freezeTableCall('my-freeze-table');
 ```
 
 #### Using the Class
@@ -41,10 +41,10 @@ freezeTableCall("my-freeze-table");
 It's useful when you need table manipulations after the creation.
 
 ```js
-import { FreezeTable } from "freezeTable";
+import { FreezeTable } from 'freezeTable';
 
 const options = {};
-const myFreezeTable = new FreezeTable("my-freeze-table", options);
+const myFreezeTable = new FreezeTable('my-freeze-table', options);
 ```
 
 > The parameter [options](####options) are optional. It loads the configuration options of the table.
@@ -53,6 +53,8 @@ const myFreezeTable = new FreezeTable("my-freeze-table", options);
 
 Options could be passed via JavaScript with object.
 
-| Name       | Type    | Default | Description                |
-| :--------- | :------ | :------ | :------------------------- |
-| freezeHead | boolean | true    | Enable to freeze `<thead>` |
+| Name             | Type    | Default | Description                                     |
+| :--------------- | :------ | :------ | :---------------------------------------------- |
+| freezeHead       | boolean | true    | Enable to freeze `<thead>`                      |
+| freezeColumn     | boolean | true    | Enable to freeze column(s)                      |
+| freezeColumnHead | boolean | true    | Enable to freeze column(s) head (Entire column) |
