@@ -1,11 +1,15 @@
-const methodName = (k) => `_build${k.charAt(0).toUpperCase() + k.slice(1)}`;
+const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
 
 /**
  * Options for configuring a FreezeTable instance.
  * @typedef {Object} Options
  * @property {boolean} [freezeHead=true] - Enable to freeze <thead>.
+ * @property {boolean} [freezeColumn=true] - Enable to freeze column(s).
  */
-
+const OPTIONS = {
+  freezeHead: 'boolean',
+  freezeColumn: 'boolean',
+};
 /**
  * Class representing a FreezeTable instance.
  */
@@ -14,6 +18,7 @@ export class FreezeTable {
 
   defaultOptions = {
     freezeHead: true,
+    freezeColumn: true,
   };
 
   /**
@@ -27,6 +32,9 @@ export class FreezeTable {
     this.options = Object.assign(this.defaultOptions, options);
     this.validate();
     this.buildOptions();
+
+    // const detectWindowScroll () => {...}
+    this.isWindowScrollX = true;
 
     FreezeTable.initializedTables[this.table.id] = true;
   }
@@ -73,28 +81,21 @@ export class FreezeTable {
   }
 
   validateOptionsObject() {
-    const keys = Object.keys(this.options);
-    let invalidKey = true;
+    const hasInvalidOption = Object.entries(this.options).some(
+      ([option, value]) => {
+        const receivedType = typeof value;
+        const expectedType = OPTIONS[option];
+        return receivedType !== expectedType;
+      },
+    );
 
-    if (keys.length) {
-      const optionsType = [{ name: 'freezeHead', type: 'boolean' }];
-      optionsType.forEach((obj) => {
-        if (keys.includes(obj.name)) {
-          const validType = typeof this.options[obj.name];
-          if (validType === obj.type) {
-            invalidKey = false;
-          }
-        }
-      });
-    }
-
-    return invalidKey;
+    return hasInvalidOption;
   }
 
   buildOptions() {
-    Object.keys(this.options).array.forEach((key) => {
-      if (this.options[key]) {
-        const method = methodName(key);
+    Object.keys(this.options).forEach((element) => {
+      if (this.options[element]) {
+        const method = methodName(element);
         if (typeof this[method] === 'function') {
           this[method]();
         }
@@ -103,18 +104,6 @@ export class FreezeTable {
   }
 
   buildFreezeHead() {
-    // será se eu tenho que clonar para dar a impressão que o head é fixo
-    // talvez eu tenha que criar um wrapper
-    /**
-     * 1 - Clone the table to handles the header, maybe clone only the head for performance
-     *      maybe use web components, when handling the styles add the this.options.shadowBox
-     *      and this.options.headWrapStyles
-     * 2 - Add scroll event listener to the wrapper on the x axis
-     * 3 - Check if is need to add/create the scroll to y axis
-     * 4 - Check the container options, and create if need
-     * 5 - Handle the case where scrollable is false and container is false
-     * 6 - Add event listener to window resize
-     */
     const headWrapper = document.createElement('div');
     const tableClone = this.table.cloneNode(true);
 
@@ -154,6 +143,50 @@ export class FreezeTable {
       console.log(
         'update the position of the header when scrolling inside a container different of the window',
       );
+    }
+  }
+
+  buildFreezeColumn() {
+    const columnWrapper = document.createElement('div');
+    const tableClone = this.table.cloneNode(true);
+
+    columnWrapper.classList.add('column-wrapper');
+    columnWrapper.append(tableClone);
+
+    if (this.options.shadow) {
+      console.log('Applying shadow to the columnWrapper');
+    }
+
+    if (this.options.headWrapStyles) {
+      console.log('Applying headWrapStyles to the columnWrapper');
+    }
+
+    this.tableWrapper.append(columnWrapper);
+
+    this.tableWrapper.style.overflowX = 'scroll';
+
+    if (this.options.scrollable) {
+      console.log('make it scrollable on y axis');
+    }
+
+    if (this.options.columnKeep) {
+      console.log('handle column keep');
+    }
+
+    if (!this.options.columnKeep && this.options.scrollable) {
+      console.log('make it scrollable for when columnKeep == false');
+    }
+
+    if (!this.options.columnKeep && !this.options.scrollable) {
+      this.tableWrapper.addEventListener('scroll', () => {
+        if (this.isWindowScrollX) return;
+
+        if (this.scrollLeft > 0) {
+          this.columnWrapper.style.visibility = 'visible';
+        } else {
+          this.columnWrapper.style.visibility = 'hidden';
+        }
+      });
     }
   }
 }

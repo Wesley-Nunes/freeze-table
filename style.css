@@ -7,6 +7,11 @@ table {
   overflow: hidden;
   visibility: hidden;
   z-index: 2;
-  width: 694px;
-  height: 31px;
+}
+
+.column-wrapper {
+  position: fixed;
+  overflow: hidden;
+  visibility: hidden;
+  z-index: 1;
 }
