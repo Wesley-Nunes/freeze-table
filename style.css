@@ -1,0 +1,12 @@
+table {
+  font-size: 10pt;
+}
+
+.header-wrapper {
+  position: fixed;
+  overflow: hidden;
+  visibility: hidden;
+  z-index: 2;
+  width: 694px;
+  height: 31px;
+}
