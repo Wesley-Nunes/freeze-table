@@ -60,3 +60,4 @@ Options could be passed via JavaScript with object.
 | freezeColumn     | boolean | true    | Enable to freeze column(s)                                         |
 | freezeColumnHead | boolean | true    | Enable to freeze column(s) head (Entire column)                    |
 | scrollBar        | boolean | false   | Enable fixed scrollBar for X axis                                  |
+| scrollable       | boolean | false   | Enable Scrollable mode for inner scroll Y axis                     |
