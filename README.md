@@ -53,9 +53,10 @@ const myFreezeTable = new FreezeTable('my-freeze-table', options);
 
 Options could be passed via JavaScript with object.
 
-| Name             | Type    | Default | Description                                     |
-| :--------------- | :------ | :------ | :---------------------------------------------- |
-| freezeHead       | boolean | true    | Enable to freeze `<thead>`                      |
-| freezeColumn     | boolean | true    | Enable to freeze column(s)                      |
-| freezeColumnHead | boolean | true    | Enable to freeze column(s) head (Entire column) |
-| scrollBar        | boolean | false   | Enable fixed scrollBar for X axis               |
+| Name             | Type    | Default | Description                                                        |
+| :--------------- | :------ | :------ | :----------------------------------------------------------------- |
+| fixedNavbar      | string  | ''      | ID of the fixed navbar for offset consideration. Example: `navbar` |
+| freezeHead       | boolean | true    | Enable to freeze `<thead>`                                         |
+| freezeColumn     | boolean | true    | Enable to freeze column(s)                                         |
+| freezeColumnHead | boolean | true    | Enable to freeze column(s) head (Entire column)                    |
+| scrollBar        | boolean | false   | Enable fixed scrollBar for X axis                                  |

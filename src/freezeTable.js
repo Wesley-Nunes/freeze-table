@@ -3,12 +3,15 @@ const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
 /**
  * Options for configuring a FreezeTable instance.
  * @typedef {Object} Options
+ * @property {string} [fixedNavbar=''] - ID of the fixed navbar for offset consideration e.g. navbar
  * @property {boolean} [freezeHead=true] - Enable to freeze <thead>.
  * @property {boolean} [freezeColumn=true] - Enable to freeze column(s).
  * @property {boolean} [freezeColumnHead=true] - Enable to freeze column(s) head (Entire column).
  * @property {boolean} [scrollBar=false] - Enable fixed scrollBar for X axis.
  */
+
 const OPTIONS = {
+  fixedNavbar: 'string',
   freezeHead: 'boolean',
   freezeColumn: 'boolean',
   freezeColumnHead: 'boolean',
@@ -21,6 +24,7 @@ export class FreezeTable {
   static initializedTables = {};
 
   defaultOptions = {
+    fixedNavbar: '',
     freezeHead: true,
     freezeColumn: true,
     freezeColumnHead: true,
@@ -35,6 +39,7 @@ export class FreezeTable {
   constructor(id, options) {
     this.tableWrapper = document.querySelector(`#${id}`);
     [this.table] = this.tableWrapper.children;
+    this.fixedNavbarHeight = 0;
     this.options = Object.assign(this.defaultOptions, options);
     this.validate();
     this.buildOptions();
@@ -68,6 +73,12 @@ export class FreezeTable {
       throw new Error(
         'Wrong key name or type. Please provide a valid key for the options object.',
       );
+    }
+    if (
+      this.options.fixedNavbar &&
+      !document.querySelector(`#${this.options.fixedNavbar}`)
+    ) {
+      throw new Error('Fixed Navbar not found. Please provide a valid ID.');
     }
   }
 
@@ -115,7 +126,7 @@ export class FreezeTable {
 
     headWrapper.classList.add('header-wrapper');
     headWrapper.append(tableClone);
-    headWrapper.style.top = `${this.tableWrapper.offsetTop}px`;
+    headWrapper.style.top = `${this.fixedNavbarHeight}px`;
 
     tableClone.classList.add([
       'table',
@@ -263,6 +274,13 @@ export class FreezeTable {
     this.tableWrapper.addEventListener('scroll', () => {
       // that.$scrollBarWrap.scrollLeft($(this).scrollLeft());
     });
+  }
+
+  buildFixedNavbar() {
+    if (this.options.fixedNavbar) {
+      const navbar = document.querySelector(`#${this.options.fixedNavbar}`);
+      this.fixedNavbarHeight = navbar.offsetHeight;
+    }
   }
 }
 
