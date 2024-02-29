@@ -58,3 +58,4 @@ Options could be passed via JavaScript with object.
 | freezeHead       | boolean | true    | Enable to freeze `<thead>`                      |
 | freezeColumn     | boolean | true    | Enable to freeze column(s)                      |
 | freezeColumnHead | boolean | true    | Enable to freeze column(s) head (Entire column) |
+| scrollBar        | boolean | false   | Enable fixed scrollBar for X axis               |

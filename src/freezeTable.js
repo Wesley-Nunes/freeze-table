@@ -6,11 +6,13 @@ const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
  * @property {boolean} [freezeHead=true] - Enable to freeze <thead>.
  * @property {boolean} [freezeColumn=true] - Enable to freeze column(s).
  * @property {boolean} [freezeColumnHead=true] - Enable to freeze column(s) head (Entire column).
+ * @property {boolean} [scrollBar=false] - Enable fixed scrollBar for X axis.
  */
 const OPTIONS = {
   freezeHead: 'boolean',
   freezeColumn: 'boolean',
   freezeColumnHead: 'boolean',
+  scrollBar: 'boolean',
 };
 /**
  * Class representing a FreezeTable instance.
@@ -22,6 +24,7 @@ export class FreezeTable {
     freezeHead: true,
     freezeColumn: true,
     freezeColumnHead: true,
+    scrollBar: false,
   };
 
   /**
@@ -185,9 +188,9 @@ export class FreezeTable {
         if (this.isWindowScrollX) return;
 
         if (this.scrollLeft > 0) {
-          this.columnWrapper.style.visibility = 'visible';
+          columnWrapper.style.visibility = 'visible';
         } else {
-          this.columnWrapper.style.visibility = 'hidden';
+          columnWrapper.style.visibility = 'hidden';
         }
       });
     }
@@ -196,6 +199,22 @@ export class FreezeTable {
   buildFreezeColumnHead() {
     const columnHeadWrapper = document.createElement('div');
     const tableClone = this.table.cloneNode(true);
+
+    const detect = () => {
+      const windowTop = window.scrollY || document.documentElement.scrollTop;
+      const tableTop = this.table.offsetTop - 1;
+
+      if (
+        tableTop <= windowTop &&
+        tableTop + this.table.offsetHeight - 1 >= windowTop &&
+        this.tableWrapper.scrollLeft > 0
+      ) {
+        this.columnHeadTableWrap.style.top = `${windowTop}px`;
+        this.columnHeadTableWrap.style.visibility = 'visible';
+      } else {
+        this.columnHeadTableWrap.style.visibility = 'hidden';
+      }
+    };
 
     columnHeadWrapper.classList.add('column-header-wrapper');
     columnHeadWrapper.append(tableClone);
@@ -216,7 +235,7 @@ export class FreezeTable {
     this.tableWrapper.addEventListener('scroll', () => {
       if (this.isWindowScrollX) return;
 
-      this.detect();
+      detect();
     });
 
     if (this.options.scrollable) {
@@ -232,20 +251,18 @@ export class FreezeTable {
     }
   }
 
-  detect() {
-    const windowTop = window.scrollY || document.documentElement.scrollTop;
-    const tableTop = this.table.offsetTop - 1;
+  buildScrollBar() {
+    // const tHeadHeight = this.table.querySelector('thead').offsetHeight;
+    const scrollBarContainer = document.createElement('div');
 
-    if (
-      tableTop <= windowTop &&
-      tableTop + this.table.offsetHeight - 1 >= windowTop &&
-      this.tableWrapper.scrollLeft > 0
-    ) {
-      this.columnHeadTableWrap.style.top = `${windowTop}px`;
-      this.columnHeadTableWrap.style.visibility = 'visible';
-    } else {
-      this.columnHeadTableWrap.style.visibility = 'hidden';
-    }
+    scrollBarContainer.style.width = this.table.offsetWidth;
+    scrollBarContainer.style.height = '1px';
+
+    // handle the detectWindowScroll objects
+
+    this.tableWrapper.addEventListener('scroll', () => {
+      // that.$scrollBarWrap.scrollLeft($(this).scrollLeft());
+    });
   }
 }
 
