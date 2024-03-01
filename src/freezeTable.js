@@ -36,7 +36,7 @@ export class FreezeTable {
 
   /**
    * Creates an instance of FreezeTable.
-   * @param {string} id - The ID of the HTML table element to attach the FreezeTable.
+   * @param {string} id - The ID of the HTML table wrapper to attach the FreezeTable.
    * @param {Options} [options] - The options object to configure the FreezeTable instance.
    */
   constructor(id, options) {
@@ -46,9 +46,11 @@ export class FreezeTable {
     this.scrollBarHeight = '16px'; // Need to create the correct logic, placeholder value
     this.options = Object.assign(this.defaultOptions, options);
     this.validate();
-    this.buildOptions();
 
-    if (!this.scrollable) {
+    this.scrollEventIdentifier = `scroll#${this.tableWrapper.id}`;
+    this.resizeEventIdentifier = `resize#${this.tableWrapper.id}`;
+
+    if (!this.options.scrollable) {
       this.tableWrapper.style.height = '100%';
       this.tableWrapper.style.minHeight = '100%';
       this.tableWrapper.style.mazHeight = '100%';
@@ -56,6 +58,8 @@ export class FreezeTable {
 
     // const detectWindowScroll () => {...}
     this.isWindowScrollX = true;
+
+    this.buildOptions();
 
     FreezeTable.initializedTables[this.table.id] = true;
   }
@@ -66,9 +70,9 @@ export class FreezeTable {
         'Table element not found. Please provide a valid table ID.',
       );
     }
-    if (FreezeTable.initializedTables[this.table.id]) {
+    if (FreezeTable.initializedTables[this.tableWrapper.id]) {
       throw new Error(
-        `Table already initialized. ID: ${this.table.id} Cannot initialize the same table multiple times.`,
+        `Table already initialized. ID: ${this.tableWrapper.id} Cannot initialize the same table multiple times.`,
       );
     }
     if (this.table.nodeName.toLowerCase() !== 'table') {
@@ -156,7 +160,8 @@ export class FreezeTable {
 
     this.tableWrapper.append(headWrapper);
 
-    this.tableWrapper.addEventListener('scroll', () => {
+    console.log('this.scrollEventIdentifier:', this.scrollEventIdentifier);
+    this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
       headWrapper.scrollLeft = this.tableWrapper.scrollLeft;
     });
 
@@ -172,7 +177,7 @@ export class FreezeTable {
         }
       };
 
-      this.tableWrapper.addEventListener('scroll', handler);
+      this.tableWrapper.addEventListener(this.scrollEventIdentifier, handler);
 
       // this.container.addEventListener("scroll", handler);
     } else if (this.options.container === window) {
@@ -230,11 +235,14 @@ export class FreezeTable {
       };
 
       // Listener - Table scroll for effecting Freeze Column
-      this.tableWrapper.addEventListener('scroll', handleScroll);
+      this.tableWrapper.addEventListener(
+        this.scrollEventIdentifier,
+        handleScroll,
+      );
     }
 
     if (!this.options.columnKeep && !this.options.scrollable) {
-      this.tableWrapper.addEventListener('scroll', () => {
+      this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
         if (this.isWindowScrollX) return;
 
         if (this.scrollLeft > 0) {
@@ -282,14 +290,14 @@ export class FreezeTable {
 
     this.tableWrapper.append(columnHeadWrapper);
 
-    this.tableWrapper.addEventListener('scroll', () => {
+    this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
       if (this.isWindowScrollX) return;
 
       detect();
     });
 
     if (this.options.scrollable) {
-      this.tableWrapper.addEventListener('scroll', () => {
+      this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
         detect();
       });
     } else if (this.options.container === window) {
@@ -312,7 +320,7 @@ export class FreezeTable {
 
     // handle the detectWindowScroll objects
 
-    this.tableWrapper.addEventListener('scroll', () => {
+    this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
       // that.$scrollBarWrap.scrollLeft($(this).scrollLeft());
     });
   }
