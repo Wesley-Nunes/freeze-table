@@ -4,6 +4,7 @@ const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
  * Options for configuring a FreezeTable instance.
  * @typedef {Object} Options
  * @property {string} [fixedNavbar=''] - ID of the fixed navbar for offset consideration e.g. navbar
+ * @property {string} [container='window'] - ID of the element that contains the table.
  * @property {boolean} [freezeHead=true] - Enable to freeze <thead>.
  * @property {boolean} [freezeColumn=true] - Enable to freeze column(s).
  * @property {boolean} [freezeColumnHead=true] - Enable to freeze column(s) head (Entire column).
@@ -13,6 +14,7 @@ const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
 
 const OPTIONS = {
   fixedNavbar: 'string',
+  container: 'string',
   freezeHead: 'boolean',
   freezeColumn: 'boolean',
   freezeColumnHead: 'boolean',
@@ -27,12 +29,21 @@ export class FreezeTable {
 
   defaultOptions = {
     fixedNavbar: '',
+    container: 'window',
     freezeHead: true,
     freezeColumn: true,
     freezeColumnHead: true,
     scrollBar: false,
     scrollable: false,
   };
+
+  container = window;
+
+  headWrapper = document.createElement('div');
+
+  columnWrapper = document.createElement('div');
+
+  columnHeadWrapper = document.createElement('div');
 
   /**
    * Creates an instance of FreezeTable.
@@ -47,20 +58,14 @@ export class FreezeTable {
     this.options = Object.assign(this.defaultOptions, options);
     this.validate();
 
-    this.scrollEventIdentifier = `scroll#${this.tableWrapper.id}`;
-    this.resizeEventIdentifier = `resize#${this.tableWrapper.id}`;
-
     if (!this.options.scrollable) {
       this.tableWrapper.style.height = '100%';
       this.tableWrapper.style.minHeight = '100%';
       this.tableWrapper.style.mazHeight = '100%';
     }
 
-    // const detectWindowScroll () => {...}
-    this.isWindowScrollX = true;
-
     this.buildOptions();
-
+    this.initEvents();
     FreezeTable.initializedTables[this.table.id] = true;
   }
 
@@ -93,6 +98,15 @@ export class FreezeTable {
       !document.querySelector(`#${this.options.fixedNavbar}`)
     ) {
       throw new Error('Fixed Navbar not found. Please provide a valid ID.');
+    }
+    if (
+      this.options.container !== 'window' &&
+      !(
+        this.options.container &&
+        document.querySelector(`#${this.options.container}`)
+      )
+    ) {
+      throw new Error('Container not found. Please provide a valid ID.');
     }
   }
 
@@ -135,12 +149,11 @@ export class FreezeTable {
   }
 
   buildFreezeHead() {
-    const headWrapper = document.createElement('div');
     const tableClone = this.table.cloneNode(true);
 
-    headWrapper.classList.add('header-wrapper');
-    headWrapper.append(tableClone);
-    headWrapper.style.top = `${this.fixedNavbarHeight}px`;
+    this.headWrapper.classList.add('header-wrapper');
+    this.headWrapper.append(tableClone);
+    this.headWrapper.style.top = `${this.fixedNavbarHeight}px`;
 
     tableClone.classList.add([
       'table',
@@ -158,11 +171,10 @@ export class FreezeTable {
       console.log('Applying headWrapStyles to the headWrapper');
     }
 
-    this.tableWrapper.append(headWrapper);
+    this.tableWrapper.append(this.headWrapper);
 
-    console.log('this.scrollEventIdentifier:', this.scrollEventIdentifier);
-    this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
-      headWrapper.scrollLeft = this.tableWrapper.scrollLeft;
+    this.tableWrapper.addEventListener('scroll', () => {
+      this.headWrapper.scrollLeft = this.tableWrapper.scrollLeft;
     });
 
     if (this.options.scrollable) {
@@ -170,33 +182,65 @@ export class FreezeTable {
         const top = this.tableWrapper.offsetTop;
 
         if (this.tableWrapper.scrollTop > 0 && top > this.fixedNavbarHeight) {
-          headWrapper.style.top = `${top}px`;
-          headWrapper.style.visibility = 'visible';
+          this.headWrapper.style.top = `${top}px`;
+          this.headWrapper.style.visibility = 'visible';
         } else {
-          headWrapper.style.visibility = 'hidden';
+          this.headWrapper.style.visibility = 'hidden';
         }
       };
 
-      this.tableWrapper.addEventListener(this.scrollEventIdentifier, handler);
+      this.tableWrapper.addEventListener('scroll', handler);
+      this.container.addEventListener('scroll', handler);
+    } else if (this.container === window) {
+      this.container.addEventListener('scroll', () => {
+        const topPosition = this.container.scrollY + this.fixedNavbarHeight;
+        const tableTop = this.table.offsetTop - 1;
 
-      // this.container.addEventListener("scroll", handler);
-    } else if (this.options.container === window) {
-      console.log(
-        'update the position of the header when scrolling directly on the window',
-      );
+        if (
+          tableTop - 1 <= topPosition &&
+          tableTop + this.table.offsetHeight - 1 >= topPosition
+        ) {
+          this.headWrapper.style.visibility = 'visible';
+        } else {
+          this.headWrapper.style.visibility = 'hidden';
+        }
+      });
     } else {
-      console.log(
-        'update the position of the header when scrolling inside a container different of the window',
-      );
+      this.container.addEventListener('scroll', () => {
+        const windowTop = window.scrollY || document.documentElement.scrollTop;
+        const tableTop = this.table.offsetTop - 1;
+
+        if (
+          tableTop <= windowTop &&
+          tableTop + this.table.offsetHeight - 1 >= windowTop
+        ) {
+          this.headTableWrap.style.top = `${windowTop}px`;
+          this.headTableWrap.style.visibility = 'visible';
+        } else {
+          this.headTableWrap.style.visibility = 'hidden';
+        }
+      });
     }
+
+    this.container.addEventListener('resize', () => {
+      const headWrapWidth = this.scrollable
+        ? this.tableWrapper.offsetWidth - this.scrollBarHeight
+        : this.tableWrapper.offsetWidth;
+      const adjustedWidth =
+        headWrapWidth > 0 ? headWrapWidth : this.tableWrapper.offsetWidth;
+
+      this.headWrapper.style.width = `${adjustedWidth}px`;
+      this.headWrapper.style.height = `${
+        this.table.querySelector('thead').offsetHeight
+      }px`;
+    });
   }
 
   buildFreezeColumn() {
-    const columnWrapper = document.createElement('div');
     const tableClone = this.table.cloneNode(true);
 
-    columnWrapper.classList.add('column-wrapper');
-    columnWrapper.append(tableClone);
+    this.columnWrapper.classList.add('column-wrapper');
+    this.columnWrapper.append(tableClone);
 
     if (this.options.shadow) {
       console.log('Applying shadow to the columnWrapper');
@@ -206,7 +250,7 @@ export class FreezeTable {
       console.log('Applying headWrapStyles to the columnWrapper');
     }
 
-    this.tableWrapper.append(columnWrapper);
+    this.tableWrapper.append(this.columnWrapper);
 
     this.tableWrapper.style.overflowX = 'scroll';
 
@@ -217,7 +261,7 @@ export class FreezeTable {
         columnTableWrapHeight > 0
           ? columnTableWrapHeight
           : this.tableWrapper.clientHeight;
-      columnWrapper.style.height = `${columnTableWrapHeight}px`;
+      this.columnWrapper.style.height = `${columnTableWrapHeight}px`;
     }
 
     if (this.options.columnKeep) {
@@ -227,35 +271,30 @@ export class FreezeTable {
     if (!this.options.columnKeep && this.options.scrollable) {
       const handleScroll = () => {
         if (this.tableWrapper.scrollLeft > 0) {
-          columnWrapper.scrollTop = this.tableWrapper.scrollTop;
-          columnWrapper.style.visibility = 'visible';
+          this.columnWrapper.scrollTop = this.tableWrapper.scrollTop;
+          this.columnWrapper.style.visibility = 'visible';
         } else {
-          columnWrapper.style.visibility = 'hidden';
+          this.columnWrapper.style.visibility = 'hidden';
         }
       };
 
-      // Listener - Table scroll for effecting Freeze Column
-      this.tableWrapper.addEventListener(
-        this.scrollEventIdentifier,
-        handleScroll,
-      );
+      this.tableWrapper.addEventListener('scroll', handleScroll);
     }
 
     if (!this.options.columnKeep && !this.options.scrollable) {
-      this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
+      this.tableWrapper.addEventListener('scroll', () => {
         if (this.isWindowScrollX) return;
 
         if (this.scrollLeft > 0) {
-          columnWrapper.style.visibility = 'visible';
+          this.columnWrapper.style.visibility = 'visible';
         } else {
-          columnWrapper.style.visibility = 'hidden';
+          this.columnWrapper.style.visibility = 'hidden';
         }
       });
     }
   }
 
   buildFreezeColumnHead() {
-    const columnHeadWrapper = document.createElement('div');
     const tableClone = this.table.cloneNode(true);
 
     const detect = () => {
@@ -274,9 +313,9 @@ export class FreezeTable {
       }
     };
 
-    columnHeadWrapper.classList.add('column-header-wrapper');
-    columnHeadWrapper.append(tableClone);
-    columnHeadWrapper.style.top = `${this.tableWrapper.offsetTop}px`;
+    this.columnHeadWrapper.classList.add('column-header-wrapper');
+    this.columnHeadWrapper.append(tableClone);
+    this.columnHeadWrapper.style.top = `${this.tableWrapper.offsetTop}px`;
 
     tableClone.style.backgroundColor = 'white';
 
@@ -288,16 +327,16 @@ export class FreezeTable {
       console.log('Applying columnHeadWrapperStyles to the columnHeadWrapper');
     }
 
-    this.tableWrapper.append(columnHeadWrapper);
+    this.tableWrapper.append(this.columnHeadWrapper);
 
-    this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
+    this.tableWrapper.addEventListener('scroll', () => {
       if (this.isWindowScrollX) return;
 
       detect();
     });
 
     if (this.options.scrollable) {
-      this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
+      this.tableWrapper.addEventListener('scroll', () => {
         detect();
       });
     } else if (this.options.container === window) {
@@ -318,9 +357,9 @@ export class FreezeTable {
     scrollBarContainer.style.width = this.table.offsetWidth;
     scrollBarContainer.style.height = '1px';
 
-    // handle the detectWindowScroll objects
+    // handle the detectHorizontalWindowScroll objects
 
-    this.tableWrapper.addEventListener(this.scrollEventIdentifier, () => {
+    this.tableWrapper.addEventListener('scroll', () => {
       // that.$scrollBarWrap.scrollLeft($(this).scrollLeft());
     });
   }
@@ -332,9 +371,44 @@ export class FreezeTable {
     }
   }
 
-  //   buildScrollable() {
-  //     console.log(1);
-  //   }
+  buildContainer() {
+    if (this.options.container !== 'window') {
+      this.container = document.querySelector(`#${this.options.container}`);
+    }
+
+    const detectHorizontalWindowScroll = () => {
+      if (this.container.scrollLeft > 0) {
+        this.isWindowScrollX = true;
+        if (this.headTableWrap) {
+          this.headTableWrap.style.visibility = 'hidden';
+        }
+        if (this.columnTableWrap) {
+          this.columnTableWrap.style.visibility = 'hidden';
+        }
+        if (this.columnHeadTableWrap) {
+          this.columnHeadTableWrap.style.visibility = 'hidden';
+        }
+        if (this.scrollBarWrap) {
+          this.scrollBarWrap.style.visibility = 'hidden';
+        }
+      } else {
+        this.isWindowScrollX = false;
+      }
+    };
+
+    this.container.addEventListener('scroll', () => {
+      detectHorizontalWindowScroll();
+    });
+  }
+
+  initEvents() {
+    const resizeEvent = new Event('resize');
+    const scrollEvent = new Event('scroll');
+
+    this.container.dispatchEvent(resizeEvent);
+    this.container.dispatchEvent(scrollEvent);
+    this.tableWrapper.dispatchEvent(scrollEvent);
+  }
 }
 
 /**
