@@ -20,6 +20,8 @@ const OPTIONS = {
   freezeColumnHead: 'boolean',
   scrollBar: 'boolean',
   scrollable: 'boolean',
+  columnBorderWidth: 'number', // option need to be develop
+  columnNum: 'number', // option need to be develop
 };
 /**
  * Class representing a FreezeTable instance.
@@ -35,6 +37,8 @@ export class FreezeTable {
     freezeColumnHead: true,
     scrollBar: false,
     scrollable: false,
+    columnBorderWidth: 1, // option need to be develop
+    columnNum: 1, // option need to be develop
   };
 
   container = window;
@@ -155,12 +159,6 @@ export class FreezeTable {
     this.headWrapper.append(tableClone);
     this.headWrapper.style.top = `${this.fixedNavbarHeight}px`;
 
-    tableClone.classList.add([
-      'table',
-      'table-sm',
-      'table-bordered',
-      'table-striped',
-    ]);
     tableClone.style.backgroundColor = 'white';
 
     if (this.options.shadow) {
@@ -242,6 +240,8 @@ export class FreezeTable {
     this.columnWrapper.classList.add('column-wrapper');
     this.columnWrapper.append(tableClone);
 
+    tableClone.style.backgroundColor = 'white';
+
     if (this.options.shadow) {
       console.log('Applying shadow to the columnWrapper');
     }
@@ -254,14 +254,20 @@ export class FreezeTable {
 
     this.tableWrapper.style.overflowX = 'scroll';
 
+    const localizeWrap = () => {
+      this.columnWrapper.style.top = `${
+        this.tableWrapper.getBoundingClientRect().top
+      }px`;
+    };
+
     if (this.options.scrollable) {
-      let columnTableWrapHeight =
+      let columnWrapHeight =
         this.tableWrapper.clientHeight - this.scrollBarHeight;
-      columnTableWrapHeight =
-        columnTableWrapHeight > 0
-          ? columnTableWrapHeight
+      columnWrapHeight =
+        columnWrapHeight > 0
+          ? columnWrapHeight
           : this.tableWrapper.clientHeight;
-      this.columnWrapper.style.height = `${columnTableWrapHeight}px`;
+      this.columnWrapper.style.height = `${columnWrapHeight}px`;
     }
 
     if (this.options.columnKeep) {
@@ -285,13 +291,32 @@ export class FreezeTable {
       this.tableWrapper.addEventListener('scroll', () => {
         if (this.isWindowScrollX) return;
 
-        if (this.scrollLeft > 0) {
+        if (this.tableWrapper.scrollLeft > 0) {
           this.columnWrapper.style.visibility = 'visible';
         } else {
           this.columnWrapper.style.visibility = 'hidden';
         }
       });
     }
+
+    this.container.addEventListener('resize', () => {
+      tableClone.style.width = `${this.table.clientWidth}px`;
+
+      let width = 0 + this.options.columnBorderWidth;
+      for (let i = 1; i <= this.options.columnNum; i += 1) {
+        const th = this.table.querySelector(`th:nth-child(${i})`).offsetWidth;
+        const addWidth =
+          th > 0
+            ? th
+            : this.table.querySelector(`td:nth-child(${i})`).offsetWidth;
+        width += addWidth;
+      }
+      this.columnWrapper.style.width = `${width}px`;
+
+      localizeWrap();
+    });
+
+    this.container.addEventListener('scroll', localizeWrap);
   }
 
   buildFreezeColumnHead() {
