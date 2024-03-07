@@ -182,8 +182,7 @@ export class FreezeTable {
 
     if (this.options.scrollable) {
       const handler = () => {
-        const top = this.tableWrapper.offsetTop;
-
+        const { top } = this.tableWrapper.getBoundingClientRect();
         if (this.tableWrapper.scrollTop > 0 && top > this.fixedNavbarHeight) {
           this.headWrapper.style.top = `${top}px`;
           this.headWrapper.style.visibility = 'visible';
@@ -226,7 +225,7 @@ export class FreezeTable {
     }
 
     this.container.addEventListener('resize', () => {
-      const headWrapWidth = this.scrollable
+      const headWrapWidth = this.options.scrollable
         ? this.tableWrapper.offsetWidth - this.scrollBarHeight
         : this.tableWrapper.offsetWidth;
       const adjustedWidth =
@@ -346,12 +345,11 @@ export class FreezeTable {
       console.log('Applying columnHeadWrapperStyles to the columnHeadWrapper');
     }
 
-    if (this.scrollable) {
+    if (this.options.scrollable) {
       detect = () => {
-        const { top } = this.tableWrapper.style;
-
+        const { top } = this.tableWrapper.getBoundingClientRect();
         if (this.tableWrapper.scrollTop > 0 && top > this.fixedNavbarHeight) {
-          this.columnHeadWrapper.style.top = top;
+          this.columnHeadWrapper.style.top = `${top}px`;
           this.columnHeadWrapper.style.visibility = 'visible';
         } else {
           this.columnHeadWrapper.style.visibility = 'hidden';
