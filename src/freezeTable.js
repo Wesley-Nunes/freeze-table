@@ -1,5 +1,10 @@
 const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
-
+const getOuterHeight = (element) => {
+  const style = window.getComputedStyle(element);
+  const marginTop = parseFloat(style.marginTop);
+  const marginBottom = parseFloat(style.marginBottom);
+  return element.offsetHeight + marginTop + marginBottom;
+};
 /**
  * Options for configuring a FreezeTable instance.
  * @typedef {Object} Options
@@ -320,29 +325,18 @@ export class FreezeTable {
   }
 
   buildFreezeColumnHead() {
-    const tableClone = this.table.cloneNode(true);
+    if (!this.options.freezeHead) {
+      this.buildFreezeHead();
+    }
+    if (!this.options.freezeColumn) {
+      this.buildFreezeColumn();
+    }
 
-    const detect = () => {
-      const windowTop = window.scrollY || document.documentElement.scrollTop;
-      const tableTop = this.table.offsetTop - 1;
+    let detect;
 
-      if (
-        tableTop <= windowTop &&
-        tableTop + this.table.offsetHeight - 1 >= windowTop &&
-        this.tableWrapper.scrollLeft > 0
-      ) {
-        this.columnHeadTableWrap.style.top = `${windowTop}px`;
-        this.columnHeadTableWrap.style.visibility = 'visible';
-      } else {
-        this.columnHeadTableWrap.style.visibility = 'hidden';
-      }
-    };
-
+    this.columnHeadWrapper = this.headWrapper.cloneNode(true);
     this.columnHeadWrapper.classList.add('column-header-wrapper');
-    this.columnHeadWrapper.append(tableClone);
-    this.columnHeadWrapper.style.top = `${this.tableWrapper.offsetTop}px`;
-
-    tableClone.style.backgroundColor = 'white';
+    this.tableWrapper.append(this.columnHeadWrapper);
 
     if (this.options.shadow) {
       console.log('Applying shadow to the columnHeadWrapper');
@@ -352,27 +346,73 @@ export class FreezeTable {
       console.log('Applying columnHeadWrapperStyles to the columnHeadWrapper');
     }
 
-    this.tableWrapper.append(this.columnHeadWrapper);
+    if (this.scrollable) {
+      detect = () => {
+        const { top } = this.tableWrapper.style;
 
+        if (this.tableWrapper.scrollTop > 0 && top > this.fixedNavbarHeight) {
+          this.columnHeadWrapper.style.top = top;
+          this.columnHeadWrapper.style.visibility = 'visible';
+        } else {
+          this.columnHeadWrapper.style.visibility = 'hidden';
+        }
+      };
+
+      this.tableWrapper.addEventListener('scroll', detect);
+    } else if (this.container === window) {
+      detect = () => {
+        const topPosition = this.container.scrollY + this.fixedNavbarHeight;
+        const tableTop = this.table.offsetTop - 1;
+        const tableOuterHeight = getOuterHeight(this.table);
+
+        if (
+          tableTop - 1 <= topPosition &&
+          tableTop + tableOuterHeight - 1 >= topPosition &&
+          this.tableWrapper.scrollLeft > 0
+        ) {
+          this.columnHeadWrapper.style.visibility = 'visible';
+        } else {
+          this.columnHeadWrapper.style.visibility = 'hidden';
+        }
+      };
+    } else {
+      detect = () => {
+        const windowTop = window.screenY;
+        const tableTop = this.table.offsetTop - 1;
+        const tableOuterHeight = getOuterHeight(this.table);
+
+        if (
+          tableTop <= windowTop &&
+          tableTop + tableOuterHeight - 1 >= windowTop &&
+          this.tableWrapper.scrollLeft() > 0
+        ) {
+          this.columnHeadWrapper.style.top = windowTop;
+          this.columnHeadWrapper.style.visibility = 'visible';
+        } else {
+          this.columnHeadWrapper.style.visibility = 'hidden';
+        }
+      };
+    }
+
+    this.container.addEventListener('scroll', detect);
     this.tableWrapper.addEventListener('scroll', () => {
-      if (this.isWindowScrollX) return;
-
-      detect();
+      if (!this.isWindowScrollX) {
+        detect();
+      }
     });
 
-    if (this.options.scrollable) {
-      this.tableWrapper.addEventListener('scroll', () => {
-        detect();
-      });
-    } else if (this.options.container === window) {
-      console.log(
-        'update the position of the header when scrolling directly on the window',
-      );
-    } else {
-      console.log(
-        'update the position of the header when scrolling inside a container different of the window',
-      );
-    }
+    this.container.addEventListener('resize', () => {
+      const tableOfColumnHeadWrapper =
+        this.columnHeadWrapper.querySelector('table');
+      const tableStyle = window.getComputedStyle(this.table);
+      const columnTableStyle = window.getComputedStyle(this.columnWrapper);
+      const tHeadOfTable = this.table.querySelector('thead');
+      const tHeadOfTableOuterHeight = getOuterHeight(tHeadOfTable);
+
+      tableOfColumnHeadWrapper.style.width = tableStyle.width;
+      this.columnHeadWrapper.style.width = columnTableStyle.width;
+      this.columnHeadWrapper.style.height = `${tHeadOfTableOuterHeight}px`;
+    });
   }
 
   buildScrollBar() {

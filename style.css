@@ -17,5 +17,8 @@ table {
 }
 
 .column-header-wrapper {
+  position: fixed;
+  overflow: hidden;
+  visibility: hidden;
   z-index: 3;
 }
