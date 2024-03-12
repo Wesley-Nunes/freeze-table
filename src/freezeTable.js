@@ -9,24 +9,28 @@ const getOuterHeight = (element) => {
  * Options for configuring a FreezeTable instance.
  * @typedef {Object} Options
  * @property {string} [fixedNavbar=''] - ID of the fixed navbar for offset consideration e.g. navbar
- * @property {string} [container='window'] - ID of the element that contains the table.
  * @property {boolean} [freezeHead=true] - Enable to freeze <thead>.
  * @property {boolean} [freezeColumn=true] - Enable to freeze column(s).
  * @property {boolean} [freezeColumnHead=true] - Enable to freeze column(s) head (Entire column).
  * @property {boolean} [scrollBar=false] - Enable fixed scrollBar for X axis.
  * @property {boolean} [scrollable=false] - Enable Scrollable mode for inner scroll Y axis.
+ * @property {integer} [columnNum=1] - The number of column(s) for freeze.
+ * @property {boolean} [columnKeep=false]
+ * @property {boolean} [shadow=false] - Enable default box-shadow UI.
+ *  - Freeze column(s) will always be displayed to support interactive table.
  */
 
 const OPTIONS = {
   fixedNavbar: 'string',
-  //   container: 'string',
   freezeHead: 'boolean',
   freezeColumn: 'boolean',
   freezeColumnHead: 'boolean',
   scrollBar: 'boolean',
   scrollable: 'boolean',
   columnBorderWidth: 'number', // option need to be develop
-  columnNum: 'number', // option need to be develop
+  columnNum: 'number',
+  columnKeep: 'boolean',
+  shadow: 'boolean',
 };
 /**
  * Class representing a FreezeTable instance.
@@ -36,14 +40,15 @@ export class FreezeTable {
 
   defaultOptions = {
     fixedNavbar: '',
-    // container: 'window',
     freezeHead: true,
     freezeColumn: true,
     freezeColumnHead: true,
     scrollBar: false,
     scrollable: false,
     columnBorderWidth: 1, // option need to be develop
-    columnNum: 1, // option need to be develop
+    columnNum: 1,
+    columnKeep: false,
+    shadow: false,
   };
 
   container = window;
@@ -159,7 +164,8 @@ export class FreezeTable {
     tableClone.style.backgroundColor = 'white';
 
     if (this.options.shadow) {
-      console.log('Applying shadow to the headWrapper');
+      this.headWrapper.style.boxShadow =
+        '0px 6px 10px -5px rgba(159, 159, 160, 0.8)';
     }
 
     if (this.options.headWrapStyles) {
@@ -229,8 +235,13 @@ export class FreezeTable {
 
     tableClone.style.backgroundColor = 'white';
 
+    const defaultColumnBorderWidth = this.options.shadow ? 0 : 1;
+    const columnBorderWidth =
+      this.options.columnBorderWidth || defaultColumnBorderWidth;
+
     if (this.options.shadow) {
-      console.log('Applying shadow to the columnWrapper');
+      this.columnWrapper.style.boxShadow =
+        '6px 0px 10px -5px rgba(159, 159, 160, 0.8)';
     }
 
     if (this.options.headWrapStyles) {
@@ -258,7 +269,7 @@ export class FreezeTable {
     }
 
     if (this.options.columnKeep) {
-      console.log('handle column keep');
+      this.columnWrapper.style.visibility = 'visible';
     }
 
     if (!this.options.columnKeep && this.options.scrollable) {
@@ -289,7 +300,7 @@ export class FreezeTable {
     this.container.addEventListener('resize', () => {
       tableClone.style.width = `${this.table.clientWidth}px`;
 
-      let width = 0 + this.options.columnBorderWidth;
+      let width = 0 + columnBorderWidth;
       for (let i = 1; i <= this.options.columnNum; i += 1) {
         const th = this.table.querySelector(`th:nth-child(${i})`).offsetWidth;
         const addWidth = th;
@@ -321,7 +332,7 @@ export class FreezeTable {
     this.tableWrapper.append(this.columnHeadWrapper);
 
     if (this.options.shadow) {
-      console.log('Applying shadow to the columnHeadWrapper');
+      this.columnHeadWrapper.style.boxShadow = 'none';
     }
 
     if (this.options.columnHeadWrapperStyles) {

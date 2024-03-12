@@ -17,3 +17,7 @@ freezeTableCall('table-head-only', {
 freezeTableCall('multi-columns', {
   columnNum: 2,
 });
+
+freezeTableCall('shadow-table', {
+  shadow: true,
+});

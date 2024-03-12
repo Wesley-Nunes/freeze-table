@@ -53,12 +53,13 @@ const myFreezeTable = new FreezeTable('my-freeze-table', options);
 
 Options could be passed via JavaScript with object.
 
-| Name             | Type    | Default  | Description                                                                                                                                                                                                                                               |
-| :--------------- | :------ | :------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| fixedNavbar      | string  | ""       | ID of the fixed navbar for offset consideration. Example: `navbar`                                                                                                                                                                                        |
-| container        | string  | "window" | ID of the element that contains the table. This option is particularly useful in that it allows you to position the table in the flow of the document near the triggering element - which will make the freeze table support in containers such as Modal. |
-| freezeHead       | boolean | true     | Enable to freeze `<thead>`                                                                                                                                                                                                                                |
-| freezeColumn     | boolean | true     | Enable to freeze column(s)                                                                                                                                                                                                                                |
-| freezeColumnHead | boolean | true     | Enable to freeze column(s) head (Entire column)                                                                                                                                                                                                           |
-| scrollBar        | boolean | false    | Enable fixed scrollBar for X axis                                                                                                                                                                                                                         |
-| scrollable       | boolean | false    | Enable Scrollable mode for inner scroll Y axis                                                                                                                                                                                                            |
+| Name             | Type    | Default | Description                                                            |
+| :--------------- | :------ | :------ | :--------------------------------------------------------------------- |
+| fixedNavbar      | string  | ""      | ID of the fixed navbar for offset consideration. Example: `navbar`     |
+| freezeHead       | boolean | true    | Enable to freeze `<thead>`                                             |
+| freezeColumn     | boolean | true    | Enable to freeze column(s)                                             |
+| freezeColumnHead | boolean | true    | Enable to freeze column(s) head (Entire column)                        |
+| scrollBar        | boolean | false   | Enable fixed scrollBar for X axis                                      |
+| scrollable       | boolean | false   | Enable Scrollable mode for inner scroll Y axis                         |
+| columnNum        | integer | 1       | The number of column(s) for freeze                                     |
+| columnKeep       | boolean | false   | Freeze column(s) will always be displayed to support interactive table |
