@@ -18,6 +18,12 @@ const getOuterHeight = (element) => {
  * @property {boolean} [columnKeep=false]
  * @property {boolean} [shadow=false] - Enable default box-shadow UI.
  *  - Freeze column(s) will always be displayed to support interactive table.
+ * @property {object} [headWrapStyles={}]
+ *  - Customized CSS styles for freeze head(s) wrap. {marginTop: '4px'}.
+ * @property {object} [columnWrapStyles={}]
+ *  - Customized CSS styles for freeze column(s) wrap. {border: 'dashed red'}.
+ * @property {object} [columnHeadWrapStyles={}]
+ *  - Customized CSS styles for freeze column-head wrap. {'style': 'value'}.
  */
 
 const OPTIONS = {
@@ -31,6 +37,9 @@ const OPTIONS = {
   columnNum: 'number',
   columnKeep: 'boolean',
   shadow: 'boolean',
+  headWrapStyles: 'object',
+  columnWrapStyles: 'object',
+  columnHeadWrapStyles: 'object',
 };
 /**
  * Class representing a FreezeTable instance.
@@ -49,6 +58,9 @@ export class FreezeTable {
     columnNum: 1,
     columnKeep: false,
     shadow: false,
+    headWrapStyles: {},
+    columnWrapStyles: {},
+    columnHeadWrapStyles: {},
   };
 
   container = window;
@@ -168,8 +180,10 @@ export class FreezeTable {
         '0px 6px 10px -5px rgba(159, 159, 160, 0.8)';
     }
 
-    if (this.options.headWrapStyles) {
-      console.log('Applying headWrapStyles to the headWrapper');
+    if (Object.keys(this.options.headWrapStyles).length) {
+      Object.entries(this.options.headWrapStyles).forEach(([key, value]) => {
+        this.headWrapper.style[key] = value;
+      });
     }
 
     this.tableWrapper.append(this.headWrapper);
@@ -244,8 +258,10 @@ export class FreezeTable {
         '6px 0px 10px -5px rgba(159, 159, 160, 0.8)';
     }
 
-    if (this.options.headWrapStyles) {
-      console.log('Applying headWrapStyles to the columnWrapper');
+    if (Object.keys(this.options.columnWrapStyles).length) {
+      Object.entries(this.options.columnWrapStyles).forEach(([key, value]) => {
+        this.columnWrapper.style[key] = value;
+      });
     }
 
     this.tableWrapper.append(this.columnWrapper);
@@ -335,8 +351,12 @@ export class FreezeTable {
       this.columnHeadWrapper.style.boxShadow = 'none';
     }
 
-    if (this.options.columnHeadWrapperStyles) {
-      console.log('Applying columnHeadWrapperStyles to the columnHeadWrapper');
+    if (Object.keys(this.options.columnHeadWrapStyles).length) {
+      Object.entries(this.options.columnHeadWrapStyles).forEach(
+        ([key, value]) => {
+          this.columnHeadWrapper.style[key] = value;
+        },
+      );
     }
 
     if (this.options.scrollable) {

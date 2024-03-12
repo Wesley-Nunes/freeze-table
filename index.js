@@ -21,3 +21,15 @@ freezeTableCall('multi-columns', {
 freezeTableCall('shadow-table', {
   shadow: true,
 });
+
+freezeTableCall('outside-head-styles', {
+  headWrapStyles: { backgroundColor: 'bisque', paddingTop: '8px' },
+});
+
+freezeTableCall('outside-column-styles', {
+  columnWrapStyles: { border: 'dashed red' },
+});
+
+freezeTableCall('outside-column-head-styles', {
+  columnHeadWrapStyles: { backgroundColor: 'indianred', paddingLeft: '8px' },
+});
