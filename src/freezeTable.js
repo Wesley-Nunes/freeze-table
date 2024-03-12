@@ -19,7 +19,7 @@ const getOuterHeight = (element) => {
 
 const OPTIONS = {
   fixedNavbar: 'string',
-  container: 'string',
+  //   container: 'string',
   freezeHead: 'boolean',
   freezeColumn: 'boolean',
   freezeColumnHead: 'boolean',
@@ -36,7 +36,7 @@ export class FreezeTable {
 
   defaultOptions = {
     fixedNavbar: '',
-    container: 'window',
+    // container: 'window',
     freezeHead: true,
     freezeColumn: true,
     freezeColumnHead: true,
@@ -73,6 +73,7 @@ export class FreezeTable {
       this.tableWrapper.style.mazHeight = '100%';
     }
 
+    this.buildContainer();
     this.buildOptions();
     this.initEvents();
     FreezeTable.initializedTables[this.table.id] = true;
@@ -107,15 +108,6 @@ export class FreezeTable {
       !document.querySelector(`#${this.options.fixedNavbar}`)
     ) {
       throw new Error('Fixed Navbar not found. Please provide a valid ID.');
-    }
-    if (
-      this.options.container !== 'window' &&
-      !(
-        this.options.container &&
-        document.querySelector(`#${this.options.container}`)
-      )
-    ) {
-      throw new Error('Container not found. Please provide a valid ID.');
     }
   }
 
@@ -207,24 +199,9 @@ export class FreezeTable {
           this.headWrapper.style.visibility = 'hidden';
         }
       });
-    } else {
-      this.container.addEventListener('scroll', () => {
-        const windowTop = window.scrollY || document.documentElement.scrollTop;
-        const tableTop = this.table.offsetTop - 1;
-
-        if (
-          tableTop <= windowTop &&
-          tableTop + this.table.offsetHeight - 1 >= windowTop
-        ) {
-          this.headTableWrap.style.top = `${windowTop}px`;
-          this.headTableWrap.style.visibility = 'visible';
-        } else {
-          this.headTableWrap.style.visibility = 'hidden';
-        }
-      });
     }
 
-    this.container.addEventListener('resize', () => {
+    const resizeHeadWrapper = () => {
       const headWrapWidth = this.options.scrollable
         ? this.tableWrapper.offsetWidth - this.scrollBarHeight
         : this.tableWrapper.offsetWidth;
@@ -235,7 +212,13 @@ export class FreezeTable {
       this.headWrapper.style.height = `${
         this.table.querySelector('thead').offsetHeight
       }px`;
-    });
+    };
+
+    this.container.addEventListener('resize', resizeHeadWrapper);
+
+    // observer the resize changes
+    const resizeObserver = new ResizeObserver(resizeHeadWrapper);
+    resizeObserver.observe(this.tableWrapper);
   }
 
   buildFreezeColumn() {
@@ -309,10 +292,10 @@ export class FreezeTable {
       let width = 0 + this.options.columnBorderWidth;
       for (let i = 1; i <= this.options.columnNum; i += 1) {
         const th = this.table.querySelector(`th:nth-child(${i})`).offsetWidth;
-        const addWidth =
-          th > 0
-            ? th
-            : this.table.querySelector(`td:nth-child(${i})`).offsetWidth;
+        const addWidth = th;
+        //   th > 0
+        //     ? th
+        //     : this.table.querySelector(`td:nth-child(${i})`).offsetWidth;
         width += addWidth;
       }
       this.columnWrapper.style.width = `${width}px`;
@@ -373,23 +356,6 @@ export class FreezeTable {
           this.columnHeadWrapper.style.visibility = 'hidden';
         }
       };
-    } else {
-      detect = () => {
-        const windowTop = window.screenY;
-        const tableTop = this.table.offsetTop - 1;
-        const tableOuterHeight = getOuterHeight(this.table);
-
-        if (
-          tableTop <= windowTop &&
-          tableTop + tableOuterHeight - 1 >= windowTop &&
-          this.tableWrapper.scrollLeft() > 0
-        ) {
-          this.columnHeadWrapper.style.top = windowTop;
-          this.columnHeadWrapper.style.visibility = 'visible';
-        } else {
-          this.columnHeadWrapper.style.visibility = 'hidden';
-        }
-      };
     }
 
     this.container.addEventListener('scroll', detect);
@@ -435,10 +401,6 @@ export class FreezeTable {
   }
 
   buildContainer() {
-    if (this.options.container !== 'window') {
-      this.container = document.querySelector(`#${this.options.container}`);
-    }
-
     const detectHorizontalWindowScroll = () => {
       if (this.container.scrollLeft > 0) {
         this.isWindowScrollX = true;

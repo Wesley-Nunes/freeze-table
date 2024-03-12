@@ -13,3 +13,7 @@ freezeTableCall('table-head-only', {
   freezeColumn: false,
   freezeColumnHead: false,
 });
+
+freezeTableCall('multi-columns', {
+  columnNum: 2,
+});
