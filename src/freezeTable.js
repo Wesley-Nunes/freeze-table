@@ -87,7 +87,8 @@ export class FreezeTable {
     this.tableWrapper = document.querySelector(`#${id}`);
     [this.table] = this.tableWrapper.children;
     this.fixedNavbarHeight = 0;
-    this.scrollBarHeight = '16px'; // Need to create the correct logic, placeholder value
+    this.scrollBarHeight =
+      window.innerWidth - document.documentElement.clientWidth;
     this.options = Object.assign(this.defaultOptions, options);
     this.validate();
 
