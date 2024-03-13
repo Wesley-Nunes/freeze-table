@@ -66,3 +66,4 @@ Options could be passed via JavaScript with object.
 | headWrapStyles       | object  | {}      | Customized CSS styles for freeze head(s) wrap. `{marginTop: '4px'}`       |
 | columnWrapStyles     | object  | {}      | Customized CSS styles for freeze column(s) wrap. `{border: 'dashed red'}` |
 | columnHeadWrapStyles | object  | {}      | Customized CSS styles for freeze column-head wrap. `{'style': 'value'}`   |
+| backgroundColor      | string  | 'white' | Default table background color. `white`, `#FFFFFF`, `rgb(255,255,255,1)`  |

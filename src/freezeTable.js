@@ -14,6 +14,7 @@ const getOuterHeight = (element) => {
  * @property {boolean} [freezeColumnHead=true] - Enable to freeze column(s) head (Entire column).
  * @property {boolean} [scrollBar=false] - Enable fixed scrollBar for X axis.
  * @property {boolean} [scrollable=false] - Enable Scrollable mode for inner scroll Y axis.
+ * @property {integer} [columnBorderWidth=1] - The addon border width for freeze column(s).
  * @property {integer} [columnNum=1] - The number of column(s) for freeze.
  * @property {boolean} [columnKeep=false]
  * @property {boolean} [shadow=false] - Enable default box-shadow UI.
@@ -24,6 +25,8 @@ const getOuterHeight = (element) => {
  *  - Customized CSS styles for freeze column(s) wrap. {border: 'dashed red'}.
  * @property {object} [columnHeadWrapStyles={}]
  *  - Customized CSS styles for freeze column-head wrap. {'style': 'value'}.
+ * @property {string} [backgroundColor='white']
+ *  - Default table background color for Bootstrap transparent UI.
  */
 
 const OPTIONS = {
@@ -33,13 +36,14 @@ const OPTIONS = {
   freezeColumnHead: 'boolean',
   scrollBar: 'boolean',
   scrollable: 'boolean',
-  columnBorderWidth: 'number', // option need to be develop
+  columnBorderWidth: 'number',
   columnNum: 'number',
   columnKeep: 'boolean',
   shadow: 'boolean',
   headWrapStyles: 'object',
   columnWrapStyles: 'object',
   columnHeadWrapStyles: 'object',
+  backgroundColor: 'string',
 };
 /**
  * Class representing a FreezeTable instance.
@@ -54,13 +58,14 @@ export class FreezeTable {
     freezeColumnHead: true,
     scrollBar: false,
     scrollable: false,
-    columnBorderWidth: 1, // option need to be develop
+    columnBorderWidth: 1,
     columnNum: 1,
     columnKeep: false,
     shadow: false,
     headWrapStyles: {},
     columnWrapStyles: {},
     columnHeadWrapStyles: {},
+    backgroundColor: 'white',
   };
 
   container = window;
@@ -175,7 +180,7 @@ export class FreezeTable {
     this.headWrapper.append(tableClone);
     this.headWrapper.style.top = `${this.fixedNavbarHeight}px`;
 
-    tableClone.style.backgroundColor = 'white';
+    tableClone.style.backgroundColor = this.options.backgroundColor;
 
     if (this.options.shadow) {
       this.headWrapper.style.boxShadow =
@@ -249,7 +254,7 @@ export class FreezeTable {
     this.columnWrapper.classList.add('column-wrapper');
     this.columnWrapper.append(tableClone);
 
-    tableClone.style.backgroundColor = 'white';
+    tableClone.style.backgroundColor = this.options.backgroundColor;
 
     const defaultColumnBorderWidth = this.options.shadow ? 0 : 1;
     const columnBorderWidth =
