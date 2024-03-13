@@ -71,6 +71,8 @@ export class FreezeTable {
 
   columnHeadWrapper = document.createElement('div');
 
+  scrollBarWrapper = document.createElement('div');
+
   /**
    * Creates an instance of FreezeTable.
    * @param {string} id - The ID of the HTML table wrapper to attach the FreezeTable.
@@ -411,16 +413,51 @@ export class FreezeTable {
   }
 
   buildScrollBar() {
-    // const tHeadHeight = this.table.querySelector('thead').offsetHeight;
+    const tableStyle = window.getComputedStyle(this.table);
+    const tableWrapperStyle = window.getComputedStyle(this.tableWrapper);
     const scrollBarContainer = document.createElement('div');
 
-    scrollBarContainer.style.width = this.table.offsetWidth;
+    scrollBarContainer.style.width = tableStyle.width;
     scrollBarContainer.style.height = '1px';
 
-    // handle the detectHorizontalWindowScroll objects
+    this.scrollBarWrapper.classList.add('scroll-bar-wrapper');
+    this.scrollBarWrapper.style.width = tableWrapperStyle.width;
+    this.scrollBarWrapper.style.height = this.scrollBarHeight;
+
+    this.scrollBarWrapper.append(scrollBarContainer);
+    this.tableWrapper.append(this.scrollBarWrapper);
+
+    this.scrollBarWrapper.addEventListener('scroll', () => {
+      this.tableWrapper.scrollLeft = this.scrollBarWrapper.scrollLeft;
+    });
 
     this.tableWrapper.addEventListener('scroll', () => {
-      // that.$scrollBarWrap.scrollLeft($(this).scrollLeft());
+      this.scrollBarWrapper.scrollLeft = this.tableWrapper.scrollLeft;
+    });
+
+    this.container.addEventListener('scroll', () => {
+      const tHeadHeight = getOuterHeight(this.table.querySelector('thead'));
+      const windowScrollTop =
+        window.screenY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const bottomPosition =
+        windowScrollTop + windowHeight - tHeadHeight + this.fixedNavbarHeight;
+      const tableTop = this.table.getBoundingClientRect().top;
+      const tableOuterHeight = getOuterHeight(this.table);
+
+      if (
+        tableTop - 1 <= bottomPosition &&
+        tableTop + tableOuterHeight - 1 >= bottomPosition
+      ) {
+        this.scrollBarWrapper.style.visibility = 'visible';
+      } else {
+        this.scrollBarWrapper.style.visibility = 'hidden';
+      }
+    });
+
+    this.container.addEventListener('resize', () => {
+      scrollBarContainer.width = tableStyle.width;
+      this.scrollBarWrapper.width = tableWrapperStyle.width;
     });
   }
 

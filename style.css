@@ -22,3 +22,11 @@ table {
   visibility: hidden;
   z-index: 3;
 }
+
+.scroll-bar-wrapper {
+  position: fixed;
+  overflow-x: scroll;
+  visibility: hidden;
+  bottom: 0;
+  z-index: 2;
+}

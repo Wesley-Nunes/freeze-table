@@ -33,3 +33,7 @@ freezeTableCall('outside-column-styles', {
 freezeTableCall('outside-column-head-styles', {
   columnHeadWrapStyles: { backgroundColor: 'indianred', paddingLeft: '8px' },
 });
+
+freezeTableCall('scroll-bar-table', {
+  scrollBar: true,
+});
