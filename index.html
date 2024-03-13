@@ -445,7 +445,8 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
-  <code>freezeTableCall('table-scrollable', { scrollable: true });</code>
+
+<code>freezeTableCall('table-scrollable', { scrollable: true });</code>
           </pre>
         </div>
       </div>
@@ -922,6 +923,7 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+
 <code>freezeTableCall('table-head-only', {
     freezeColumn: false,
     freezeColumnHead: false,
@@ -1181,6 +1183,7 @@
       <br />
       <div class="card-body">
         <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+
 <code>freezeTableCall('multi-column', {
     columnNum: 2,
   });</code>
@@ -1397,6 +1400,7 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+
 <code>freezeTableCall('shadow-table', {
     shadow: true,
   });</code>
@@ -1742,6 +1746,7 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+
 <code>freezeTableCall('outside-head-styles', {
     headWrapStyles: { backgroundColor: 'bisque', paddingTop: '8px' },
   });</code>
@@ -2084,6 +2089,7 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+
 <code>freezeTableCall('outside-column-styles', {
     columnWrapStyles: { border: 'dashed red' },
   });</code>
@@ -2427,6 +2433,7 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+
 <code>freezeTableCall('outside-column-head-styles', {
     columnHeadWrapStyles: { backgroundColor: 'indianred', paddingLeft: '8px' },
   });</code>
@@ -2909,10 +2916,275 @@
         <div class="card-header">Example Code</div>
         <div class="card-body">
           <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
-                <code>freezeTableCall('scroll-bar-table', {
-                    scrollBar: true,
-                  });</code>
-                    </pre>
+                
+<code>freezeTableCall('scroll-bar-table', {
+    scrollBar: true,
+});</code>
+</pre>
+        </div>
+      </div>
+      <!-- /Example code -->
+
+      <hr />
+
+      <a name="table-column-keep"></a>
+      <h5>Freeze Column(s) Keep</h5>
+      <p>
+        Freeze column(s) will always be displayed to support interactive table.
+      </p>
+      <div class="table-column-keep table-fill" id="table-column-keep">
+        <table
+          cellspacing="0"
+          class="table table-small-font table-bordered table-striped"
+          style="min-width: 3400px"
+        >
+          <thead>
+            <tr>
+              <th rowspan="2">#</th>
+              <th rowspan="2">Select</th>
+              <th rowspan="2">Text</th>
+              <th colspan="2">Bank (1930)</th>
+              <th colspan="2">Eget kapital John Doe (2010)</th>
+              <th colspan="2">Eget kapital Jane Doe (2020)</th>
+              <th colspan="2">Utgående moms 25 % (2610)</th>
+              <th colspan="2">Moms varuförvärv EU 25 % (2615)</th>
+              <th colspan="2">Ingående moms 25 % (2640)</th>
+              <th colspan="2">Ingående moms utland (2645)</th>
+              <th colspan="2">Moms redovisningskonto (2650)</th>
+              <th colspan="2">Momspliktiga intäkter (3000)</th>
+              <th colspan="2">Inköp varor EU 25 % (4056)</th>
+              <th colspan="2">Förbrukningsinventarier (5400)</th>
+              <th colspan="2">Kontorsmaterial och trycksaker (6100)</th>
+              <th colspan="2">Övriga externa tjänster (6500)</th>
+              <th colspan="2">Bankavgifter (6570)</th>
+              <th colspan="2">Årets resultat (8999)</th>
+            </tr>
+            <tr>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+              <th>Credit</th>
+              <th>Debit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th data-columns="ledger-col-0">1</th>
+              <td><input type="checkbox" /></td>
+              <td>Office stuff</td>
+              <td>100 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>25 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>75 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td><input type="checkbox" /></td>
+              <td>iPad</td>
+              <td>5000 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>1250 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>3750 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>3</th>
+              <td><input type="checkbox" /></td>
+              <td>Office stuff</td>
+              <td>100 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>25 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>75 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>4</th>
+              <td><input type="checkbox" /></td>
+              <td>iPhone</td>
+              <td>7000 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>1750 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>5250 SEK</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th data-columns="ledger-col-0"></th>
+              <th data-priority="1" data-columns="ledger-col-1"></th>
+              <th data-priority="1" data-columns="ledger-col-2"></th>
+              <th>12 200 SEK</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>3050 SEK</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>8000 SEK</th>
+              <th></th>
+              <th>150 SEK</th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <br />
+      <!-- Example code -->
+      <div class="card">
+        <div class="card-header">Example Code</div>
+        <div class="card-body">
+          <pre><code>import { freezeTableCall } from './src/freezeTable.js';</code>
+                
+<code>freezeTableCall('table-column-keep', {
+    'columnNum': 2,
+    'columnKeep': true,
+});</code>
+</pre>
         </div>
       </div>
       <!-- /Example code -->

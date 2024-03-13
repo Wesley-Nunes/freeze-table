@@ -37,3 +37,8 @@ freezeTableCall('outside-column-head-styles', {
 freezeTableCall('scroll-bar-table', {
   scrollBar: true,
 });
+
+freezeTableCall('table-column-keep', {
+  columnNum: 2,
+  columnKeep: true,
+});
