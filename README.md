@@ -67,3 +67,11 @@ Options could be passed via JavaScript with object.
 | columnWrapStyles     | object  | {}      | Customized CSS styles for freeze column(s) wrap. `{border: 'dashed red'}` |
 | columnHeadWrapStyles | object  | {}      | Customized CSS styles for freeze column-head wrap. `{'style': 'value'}`   |
 | backgroundColor      | string  | 'white' | Default table background color. `white`, `#FFFFFF`, `rgb(255,255,255,1)`  |
+
+---
+
+## API USAGE
+
+### destroy()
+
+Destroy the current instance of the freeze table.

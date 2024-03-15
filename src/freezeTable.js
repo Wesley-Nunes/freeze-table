@@ -78,6 +78,8 @@ export class FreezeTable {
 
   scrollBarWrapper = document.createElement('div');
 
+  tableWrapperReadOnlyStyles = {};
+
   /**
    * Creates an instance of FreezeTable.
    * @param {string} id - The ID of the HTML table wrapper to attach the FreezeTable.
@@ -93,9 +95,15 @@ export class FreezeTable {
     this.validate();
 
     if (!this.options.scrollable) {
+      const tableWrapperStyle = window.getComputedStyle(this.tableWrapper);
+
+      this.tableWrapperReadOnlyStyles.height = tableWrapperStyle.height;
+      this.tableWrapperReadOnlyStyles.minHeight = tableWrapperStyle.minHeight;
+      this.tableWrapperReadOnlyStyles.maxHeight = tableWrapperStyle.maxHeight;
+
       this.tableWrapper.style.height = '100%';
       this.tableWrapper.style.minHeight = '100%';
-      this.tableWrapper.style.mazHeight = '100%';
+      this.tableWrapper.style.maxHeight = '100%';
     }
 
     this.buildContainer();
@@ -274,6 +282,8 @@ export class FreezeTable {
 
     this.tableWrapper.append(this.columnWrapper);
 
+    const tableWrapperStyle = window.getComputedStyle(this.tableWrapper);
+    this.tableWrapperReadOnlyStyles.overflowX = tableWrapperStyle.overflowX;
     this.tableWrapper.style.overflowX = 'scroll';
 
     const localizeWrap = () => {
@@ -507,6 +517,49 @@ export class FreezeTable {
     this.container.dispatchEvent(resizeEvent);
     this.container.dispatchEvent(scrollEvent);
     this.tableWrapper.dispatchEvent(scrollEvent);
+  }
+
+  destroy() {
+    const removeEventListener = () => {};
+    if (!this.options.scrollable) {
+      this.tableWrapper.style.height = this.tableWrapperReadOnlyStyles.height;
+      this.tableWrapper.style.minHeight =
+        this.tableWrapperReadOnlyStyles.minHeight;
+      this.tableWrapper.style.maxHeight =
+        this.tableWrapperReadOnlyStyles.maxHeight;
+    }
+
+    if (this.options.freezeHead) {
+      this.headWrapper.remove();
+      this.tableWrapper.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('resize', removeEventListener);
+    }
+    if (this.options.freezeColumn) {
+      this.columnWrapper.remove();
+
+      this.tableWrapper.style.overflowX =
+        this.tableWrapperReadOnlyStyles.overflowX;
+
+      this.tableWrapper.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('resize', removeEventListener);
+    }
+    if (this.options.freezeColumnHead) {
+      this.columnHeadWrapper.remove();
+      this.tableWrapper.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('resize', removeEventListener);
+    }
+    if (this.options.scrollBar) {
+      this.scrollBarWrapper.remove();
+      this.tableWrapper.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('scroll', removeEventListener);
+      this.container.removeEventListener('resize', removeEventListener);
+    }
+    if (this.options.container) {
+      this.container.removeEventListener('scroll', removeEventListener);
+    }
   }
 }
 

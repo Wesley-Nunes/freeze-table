@@ -1,6 +1,11 @@
-import { freezeTableCall } from './src/freezeTable.js';
+import { FreezeTable, freezeTableCall } from './src/freezeTable.js';
 
-freezeTableCall('table-basic-wrapper');
+const defaultTable = new FreezeTable('table-basic-wrapper');
+
+const btn = document.querySelector('#table-basic-btn');
+btn.onclick = () => {
+  defaultTable.destroy();
+};
 
 freezeTableCall('table-scrollable', { scrollable: true });
 
