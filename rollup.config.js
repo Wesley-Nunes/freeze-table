@@ -1,4 +1,5 @@
 import copy from 'rollup-plugin-copy';
+import postcss from 'rollup-plugin-postcss';
 
 export default {
   input: './index.js',
@@ -9,11 +10,11 @@ export default {
     },
   ],
   plugins: [
+    postcss({
+      plugins: [],
+    }),
     copy({
-      targets: [
-        { src: 'index.html', dest: 'dist' },
-        { src: 'style.css', dest: 'dist' },
-      ],
+      targets: [{ src: './src/style.css', dest: 'dist' }],
       verbose: true,
     }),
   ],

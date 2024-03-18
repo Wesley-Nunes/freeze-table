@@ -1,3 +1,5 @@
+import './style.css';
+
 const methodName = (k) => `build${k.charAt(0).toUpperCase() + k.slice(1)}`;
 const getOuterHeight = (element) => {
   const style = window.getComputedStyle(element);
@@ -261,8 +263,6 @@ export class FreezeTable {
 
   buildFreezeColumn() {
     const tableClone = this.table.cloneNode(true);
-
-    tableClone.style.margin = 0;
 
     this.columnWrapper.classList.add('column-wrapper');
     this.columnWrapper.append(tableClone);
