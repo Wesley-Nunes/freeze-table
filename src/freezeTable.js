@@ -185,6 +185,8 @@ export class FreezeTable {
   buildFreezeHead() {
     const tableClone = this.table.cloneNode(true);
 
+    tableClone.style.margin = 0;
+
     this.headWrapper.classList.add('header-wrapper');
     this.headWrapper.append(tableClone);
     this.headWrapper.style.top = `${this.fixedNavbarHeight}px`;
@@ -259,6 +261,8 @@ export class FreezeTable {
 
   buildFreezeColumn() {
     const tableClone = this.table.cloneNode(true);
+
+    tableClone.style.margin = 0;
 
     this.columnWrapper.classList.add('column-wrapper');
     this.columnWrapper.append(tableClone);
