@@ -1,21 +1,18 @@
-import copy from 'rollup-plugin-copy';
-import postcss from 'rollup-plugin-postcss';
+import postcss from "rollup-plugin-postcss";
+import terser from "@rollup/plugin-terser";
 
 export default {
-  input: './index.js',
-  output: [
-    {
-      file: 'dist/index.js',
-      format: 'iife',
-    },
-  ],
-  plugins: [
-    postcss({
-      plugins: [],
-    }),
-    copy({
-      targets: [{ src: './src/style.css', dest: 'dist' }],
-      verbose: true,
-    }),
-  ],
+    input: "./src/freezeTable.js",
+    output: [
+        {
+            file: "index.js",
+            format: "es",
+        },
+    ],
+    plugins: [
+        postcss({
+            plugins: [],
+        }),
+        terser(),
+    ],
 };
